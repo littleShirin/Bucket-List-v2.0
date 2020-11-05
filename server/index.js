@@ -54,6 +54,7 @@ passport.use(
     function (accessToken, refreshToken, profile, done) {
       //passport callback function
       console.log('inside express');
+      // console.log(profile);
       // should have the part where we add users in db somewhere here
       // console.log(profile);
       // User.findOrCreate({ GoogleId: profile.id }, function (err, user) {
@@ -61,10 +62,11 @@ passport.use(
       // 	return done(err, user);
       // });
       // console.log('this is the outside');
-      User.find({ GoogleId: profile.id })
+      User.findOne({ GoogleId: profile.id })
         .then((currentUser) => {
           if (currentUser) {
             //if we already have a record with the given profile ID
+            console.log('current user', currentUser);
             done(null, currentUser);
           } else {
             //if not, create a new user
@@ -81,7 +83,7 @@ passport.use(
               .catch(() => console.log('error'));
           }
         })
-        .catch(() => console.log('error in finding user'));
+        .catch((err) => console.log(err));
     }
   )
 );
@@ -122,9 +124,9 @@ app.use((req, res) => res.sendStatus(404));
 // global middleware error handler
 app.use((err, req, res, next) => {
   const defaultErr = {
-    log: 'Express error handler caught unknown middleware error',
+    log: err,
     status: 400,
-    message: { err: 'An error occurred' },
+    message: { err: err },
   };
   const errorObj = { ...defaultErr, ...err };
   console.log(errorObj.log);
