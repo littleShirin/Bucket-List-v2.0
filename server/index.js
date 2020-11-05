@@ -70,6 +70,8 @@ passport.use(
 						//if not, create a new user
 						new User({
 							GoogleId: profile.id,
+							DisplayName: profile.displayName,
+							Image: profile.photos[0].value,
 						})
 							.save()
 							.then((newUser) => {
@@ -108,6 +110,11 @@ app.get(
 		res.redirect('/');
 	}
 );
+
+app.get('/user', (req, res) => {
+	consol.log('getting user data');
+	res.send(user);
+});
 
 app.get('/', (req, res) =>
 	res.status(200).sendFile(path.resolve(__dirname, '../index.html'))
